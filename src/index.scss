@@ -1,22 +1,28 @@
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-      sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-.Board{
-    width: 400px;
-    height: 400px;
-    background-color: cadetblue;
-    display: grid;
-    grid-template-columns: repeat(8,1fr);
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
-.Square{
-    width: 50px;
-    height: 50px;
-    border: 1px solid black;
+
+.Board {
+  width: 400px;
+  margin: auto;
+  height: 400px;
+  background-color: cadetblue;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+}
+
+.Square {
+  width: 50px;
+  height: 50px;
+  border: 1px solid black;
+  &:hover {
+    background-color: aquamarine;
+  }
 }

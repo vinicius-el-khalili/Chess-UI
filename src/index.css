@@ -8,6 +8,7 @@
 
 .Board {
   width: 400px;
+  margin: auto;
   height: 400px;
   background-color: cadetblue;
   display: grid;
@@ -17,5 +18,7 @@
   width: 50px;
   height: 50px;
   border: 1px solid black; }
+  .Square:hover {
+    background-color: aquamarine; }
 
 /*# sourceMappingURL=index.css.map */
