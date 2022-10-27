@@ -15,7 +15,7 @@ class Board extends React.Component{
         }
 
         this.chess = new Chess('rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq e6 0 2')
-        this.flipBoard=this.flipBoard.bind(this)
+        this.moveTEST=this.moveTEST.bind(this)
 
         this.reff = {}
         this._sqr_keys = []
@@ -36,17 +36,16 @@ class Board extends React.Component{
     componentDidMount(){
         
         this.setState({
-            playercolor:"black",
-            squares:this.fillSquares(),
+            squares:this.fillSquares("white"),
         })
 
     }
     
-    fillSquares(){
+    fillSquares(color){
 
         let squares=Array(8).fill().map(()=>Array(8).fill(0))
-        const horizontal = this.state.playercolor==="white" ? "abcdefgh" : "hgfedcba"
-        const vertical = this.state.playercolor==="white" ? "87654321" : "12345678"
+        const horizontal = color==="white" ? "abcdefgh" : "hgfedcba"
+        const vertical = color==="white" ? "87654321" : "12345678"
         for (let i=0;i<=7;i++){for(let j=0;j<=7;j++){
             let _sqr = horizontal[j]+vertical[i]
             squares[i][j]=(
@@ -63,90 +62,34 @@ class Board extends React.Component{
 
     }
     unselectAll(){
-
         this._sqr_keys.map(_s=>{
             this.reff[_s].current.unselect()
         })
-
+    }
+    updteAll(){
+        this._sqr_keys.forEach(_s=>{
+            this.reff[_s].current.updateGame()
+        })
     }
     handleClick(_sqr){
-
-        if (!this.chess.get(_sqr)){
-
-            this.setState({
-                preMove:false,
-                selectedSquare:null
-            })
-            this.unselectAll()
-        
-        }
-
-        if (!this.state.preMove){
-
-            this.unselectAll()  
-
-            this.reff[_sqr].current.select()
-            this.setState({selectedSquare:_sqr})
-
-            this.chess.moves({square:_sqr}).forEach(move=>{
-                
-                move.length>=3 ? 
-                    this.reff[move.slice(1,3)].current.select()
-                    :
-                    this.reff[move].current.select()
-            
-                })
-            
-            this.setState({preMove:true})
-            
-        } else {
-
-            var legalMove = false
-            this.chess.moves({square:this.state.selectedSquare}).forEach( move=>{
-                let compare
-                move.length>=3 ?
-                    compare = move.slice(1,3) :
-                    compare = move
-                if (compare === _sqr){
-                    legalMove = true
-                }
-            })
-            
-            if (legalMove){
-                this.reff[_sqr].current.move()
-                this.unselectAll()
-                this.setState({
-                    preMove:false,
-                    selectedSquare:null
-                })
-
-            }
-
-        }
-
-
-
+        this.unselectAll()
+        this.reff[_sqr].current.select()
     }
     
-    flipBoard(){
-        if (this.state.playercolor==="white"){
-            this.setState({playercolor:"black"})
-        }else{
-            this.setState({playercolor:"white"})
-        }
-        this.setState({squares:this.fillSquares()})
-        this._sqr_keys.map(_s=>{
-            this.reff[_s].current.unselect()
-        })
+    moveTEST(){
+        this.unselectAll()
+        this.chess.move("c4")
+        this.chess.move("c5")
+        this.updteAll()
     }
-    
+
     render(){
         return(
             <>
             <div className="Board">
                 {this.state.squares}
             </div>
-            <button onClick={this.flipBoard}>Flip Board</button>
+            <button onClick={this.moveTEST}>Move piece</button>
             </>
         )
     }
