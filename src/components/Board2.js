@@ -10,6 +10,8 @@ class Board extends React.Component{
 
         this.state={
             playercolor:"white",
+            preMove:false,
+            selectedSquare:null
         }
 
         this.chess = new Chess('rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq e6 0 2')
@@ -27,20 +29,21 @@ class Board extends React.Component{
             }
         }
 
-        this.preMove=false
-
     }
 
     
 
     componentDidMount(){
+        
         this.setState({
             playercolor:"black",
             squares:this.fillSquares(),
         })
+
     }
     
     fillSquares(){
+
         let squares=Array(8).fill().map(()=>Array(8).fill(0))
         const horizontal = this.state.playercolor==="white" ? "abcdefgh" : "hgfedcba"
         const vertical = this.state.playercolor==="white" ? "87654321" : "12345678"
@@ -57,36 +60,49 @@ class Board extends React.Component{
             )
         }}
         return squares
-    }
-
-    movePiece(){
 
     }
 
     handleClick(_sqr){
 
-        if (!this.preMove){
+        if (!this.state.preMove){
 
             this._sqr_keys.map(_s=>{
                 this.reff[_s].current.unselect()
             })
+
             this.reff[_sqr].current.select()
+            this.setState({selectedSquare:_sqr})
+
             this.chess.moves({square:_sqr}).forEach(move=>{
+                
+                move.length>=3 ? 
+                    this.reff[move.slice(1,3)].current.select()
+                    :
+                    this.reff[move].current.select()
             
-            move.length>=3 ? 
-                this.reff[move.slice(1,3)].current.select()
-                :
-                this.reff[move].current.select()
-            })
-        
+                })
+            
         } else {
+
+            var legalMove = false
+            this.chess.moves({square:this.state.selectedSquare}).forEach( move=>{
+                let compare
+                move.length>=3 ?
+                    compare = move.slice(1,3) :
+                    compare = move
+                if (compare === _sqr){
+                    legalMove = true
+                }
+            })
             
+            if (legalMove){
+                this.reff[_sqr].current.unselect()
+            }
+
         }
         
-        
-
-        
-        this.preMove = this.preMove ? false : true
+        this.setState({preMove:this.state.preMove ? false : true})
 
     }
     
