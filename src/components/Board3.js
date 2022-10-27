@@ -25,8 +25,17 @@ class Board extends React.Component{
         }
         this.flipBoard=this.flipBoard.bind(this)
         this.movePiece=this.movePiece.bind(this)
+        this.reff={}
+        this._SQRS = []
+        for (let i=0;i<=7;i++){
+            for (let j=0;j<=7;j++){
+                this.reff['abcdefgh'[i]+'12345678'[j]] = React.createRef()
+                this._SQRS.push('abcdefgh'[i]+'12345678'[j])
+            }
+        }
     }
 
+    
     // --------------------------------------- FLIP BOARD
     flipBoard(color){
         if(this.state.boardOrientation==="white"){
@@ -39,6 +48,9 @@ class Board extends React.Component{
     // --------------------------------------- MOVE PIECE
     movePiece(){
         this.state.game.move("e4")
+        this._SQRS.forEach(_sqr=>{
+            this.reff[_sqr].current.update()
+        })
     }
 
     // --------------------------------------- RENDER
@@ -47,8 +59,14 @@ class Board extends React.Component{
         for (let i=0;i<=7;i++){
             let row=[]
             for (let j=0;j<=7;j++){
+                let _sqr = "abcdefgh"[i]+"12345678"[j]
                 row.push(
-                    <Square _sqr={"abcdefgh"[i]+"12345678"[j]} game={this.state.game}/>
+                    <Square 
+                    _sqr={_sqr}
+                    ref={this.reff[_sqr]}
+                    game={this.state.game}
+                    color={(i+j)%2!==0 ? "white" : "cornflowerblue"}
+                    />
                 )
             }
             container.push(
