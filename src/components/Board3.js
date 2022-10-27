@@ -1,6 +1,8 @@
+import { Chess } from "chess.js";
 import React from "react";
 import Square from "./Square3";
 
+// --------------------------------------- LAYOUT
 const layout = {
     white:{
         board:{display:"flex"},
@@ -11,108 +13,59 @@ const layout = {
         row:{}
     }
 }
-
+// --------------------------------------- BOARD
 class Board extends React.Component{
     constructor(){
         super()
         this.state={
-            layout:layout.white
+            player:"white",
+            boardOrientation:"white",
+            layout:layout.white,
+            game:new Chess()
         }
-        this.change=this.change.bind(this)
+        this.flipBoard=this.flipBoard.bind(this)
+        this.movePiece=this.movePiece.bind(this)
     }
-    change(color){
-        this.setState({
-            layout:layout.black
-        })
+
+    // --------------------------------------- FLIP BOARD
+    flipBoard(color){
+        if(this.state.boardOrientation==="white"){
+            this.setState({layout:layout.black, boardOrientation:"black"})
+        } else {
+            this.setState({layout:layout.white, boardOrientation:"white"})
+        }
     }
+
+    // --------------------------------------- MOVE PIECE
+    movePiece(){
+        this.state.game.move("e4")
+    }
+
+    // --------------------------------------- RENDER
     render(){
-        return(
+        var container = []
+        for (let i=0;i<=7;i++){
+            let row=[]
+            for (let j=0;j<=7;j++){
+                row.push(
+                    <Square _sqr={"abcdefgh"[i]+"12345678"[j]} game={this.state.game}/>
+                )
+            }
+            container.push(
+                <div className="row" style={this.state.layout.row}>
+                    {row}
+                    </div>
+            )
+        }
+{}        return(
             <>
-            <div className="Board" 
-            style={this.state.layout.board}>
-                <div className="row" style={this.state.layout.row}> 
-                    <Square><p style={{backgroundColor:"green"}}>a1</p></Square>
-                    <Square>a2</Square>
-                    <Square>a3</Square>
-                    <Square>a4</Square>
-                    <Square>a5</Square>
-                    <Square>a6</Square>
-                    <Square>a7</Square>
-                    <Square><p style={{backgroundColor:"red"}}>a8</p></Square>
-                </div>
-                <div className="row" style={this.state.layout.row}>
-                    <Square>b1</Square>
-                    <Square>b2</Square>
-                    <Square>b3</Square>
-                    <Square>b4</Square>
-                    <Square>b5</Square>
-                    <Square>b6</Square>
-                    <Square>b7</Square>
-                    <Square>b8</Square>
-                </div>
-                <div className="row" style={this.state.layout.row}>
-                    <Square>c1</Square>
-                    <Square>c2</Square>
-                    <Square>c3</Square>
-                    <Square>c4</Square>
-                    <Square>c5</Square>
-                    <Square>c6</Square>
-                    <Square>c7</Square>
-                    <Square>c8</Square>
-                </div>
-                <div className="row" style={this.state.layout.row}>
-                    <Square>d1</Square>
-                    <Square>d2</Square>
-                    <Square>d3</Square>
-                    <Square>d4</Square>
-                    <Square>d5</Square>
-                    <Square>d6</Square>
-                    <Square>d7</Square>
-                    <Square>d8</Square>
-                </div>
-                <div className="row" style={this.state.layout.row}>
-                    <Square>e1</Square>
-                    <Square>e2</Square>
-                    <Square>e3</Square>
-                    <Square>e4</Square>
-                    <Square>e5</Square>
-                    <Square>e6</Square>
-                    <Square>e7</Square>
-                    <Square>e8</Square>
-                </div>
-                <div className="row" style={this.state.layout.row}>
-                    <Square>f1</Square>
-                    <Square>f2</Square>
-                    <Square>f3</Square>
-                    <Square>f4</Square>
-                    <Square>f5</Square>
-                    <Square>f6</Square>
-                    <Square>f7</Square>
-                    <Square>f8</Square>
-                </div>
-                <div className="row" style={this.state.layout.row}>
-                    <Square>g1</Square>
-                    <Square>g2</Square>
-                    <Square>g3</Square>
-                    <Square>g4</Square>
-                    <Square>g5</Square>
-                    <Square>g6</Square>
-                    <Square>g7</Square>
-                    <Square>g8</Square>
-                </div>
-                <div className="row" style={this.state.layout.row}>
-                    <Square><p style={{backgroundColor:"blue"}}>h1</p></Square>
-                    <Square>h2</Square>
-                    <Square>h3</Square>
-                    <Square>h4</Square>
-                    <Square>h5</Square>
-                    <Square>h6</Square>
-                    <Square>h7</Square>
-                    <Square><p style={{backgroundColor:"yellow"}}>h8</p></Square>
-                </div>
-                
+            <div className="Board" style={this.state.layout.board}>
+                {container} 
             </div>
-            <button onClick={this.change}>change</button>
+            <button onClick={this.flipBoard}>Flip Board</button>
+            <h3>Board side: {this.state.boardOrientation}</h3>
+            <button onClick={this.movePiece}>Move piece</button>
+
             </>
         )
     }
