@@ -1,4 +1,4 @@
-import Board from "./components/Board2";
+import Board from "./components/Board3";
 function App() {
   return (
     <div className="App">

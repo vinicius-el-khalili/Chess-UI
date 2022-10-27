@@ -9,10 +9,7 @@
 .Board {
   width: 400px;
   margin: auto;
-  height: 400px;
-  background-color: cadetblue;
-  display: grid;
-  grid-template-columns: repeat(8, 1fr); }
+  height: 400px; }
 
 .Square {
   width: 50px;
