@@ -1,5 +1,6 @@
 import React from "react";
 import Square from "./Square3";
+
 const layout = {
     white:{
         board:{display:"flex"},
@@ -10,6 +11,7 @@ const layout = {
         row:{}
     }
 }
+
 class Board extends React.Component{
     constructor(){
         super()
@@ -29,14 +31,14 @@ class Board extends React.Component{
             <div className="Board" 
             style={this.state.layout.board}>
                 <div className="row" style={this.state.layout.row}> 
-                    <Square>a1</Square>
+                    <Square><p style={{backgroundColor:"green"}}>a1</p></Square>
                     <Square>a2</Square>
                     <Square>a3</Square>
                     <Square>a4</Square>
                     <Square>a5</Square>
                     <Square>a6</Square>
                     <Square>a7</Square>
-                    <Square>a8</Square>
+                    <Square><p style={{backgroundColor:"red"}}>a8</p></Square>
                 </div>
                 <div className="row" style={this.state.layout.row}>
                     <Square>b1</Square>
@@ -99,14 +101,14 @@ class Board extends React.Component{
                     <Square>g8</Square>
                 </div>
                 <div className="row" style={this.state.layout.row}>
-                    <Square>h1</Square>
+                    <Square><p style={{backgroundColor:"blue"}}>h1</p></Square>
                     <Square>h2</Square>
                     <Square>h3</Square>
                     <Square>h4</Square>
                     <Square>h5</Square>
                     <Square>h6</Square>
                     <Square>h7</Square>
-                    <Square>h8</Square>
+                    <Square><p style={{backgroundColor:"yellow"}}>h8</p></Square>
                 </div>
                 
             </div>
