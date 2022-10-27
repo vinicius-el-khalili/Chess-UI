@@ -9,7 +9,7 @@ export default class Board extends React.Component{
         this.chess = new Chess()
     }
     state = {
-        message:"hello!!!"
+        message:"state message"
     }
     fillsquares(playercolor){
         const horizontal = playercolor==="white" ? "abcdefgh" : "hgfedcba"
@@ -29,7 +29,7 @@ export default class Board extends React.Component{
     render(){
         return(
             <>
-            <button onClick={this.handleClick()}>button</button>
+            <button onClick={this.handleClick}>button</button>
             <div className="Board">
                 {this.squares}
             </div>
