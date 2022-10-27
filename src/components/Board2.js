@@ -62,14 +62,28 @@ class Board extends React.Component{
         return squares
 
     }
+    unselectAll(){
 
+        this._sqr_keys.map(_s=>{
+            this.reff[_s].current.unselect()
+        })
+
+    }
     handleClick(_sqr){
+
+        if (!this.chess.get(_sqr)){
+
+            this.setState({
+                preMove:false,
+                selectedSquare:null
+            })
+            this.unselectAll()
+        
+        }
 
         if (!this.state.preMove){
 
-            this._sqr_keys.map(_s=>{
-                this.reff[_s].current.unselect()
-            })
+            this.unselectAll()  
 
             this.reff[_sqr].current.select()
             this.setState({selectedSquare:_sqr})
@@ -82,6 +96,8 @@ class Board extends React.Component{
                     this.reff[move].current.select()
             
                 })
+            
+            this.setState({preMove:true})
             
         } else {
 
@@ -97,12 +113,18 @@ class Board extends React.Component{
             })
             
             if (legalMove){
-                this.reff[_sqr].current.unselect()
+                this.reff[_sqr].current.move()
+                this.unselectAll()
+                this.setState({
+                    preMove:false,
+                    selectedSquare:null
+                })
+
             }
 
         }
-        
-        this.setState({preMove:this.state.preMove ? false : true})
+
+
 
     }
     
