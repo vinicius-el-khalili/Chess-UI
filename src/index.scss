@@ -9,6 +9,10 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+body{
+  background-color:cadetblue
+}
+
 .Board {
   width: 400px;
   margin: auto;
@@ -20,8 +24,24 @@
 .Square {
   width: 50px;
   height: 50px;
-  border: 1px solid black;
-  &:hover {
-    background-color: aquamarine;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.Piece{
+  width:40px;
+  height: 40px;
+  border-radius: 100%;
+  font-family:'Courier New', Courier, monospace;
+  font-size: 3.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  &:hover{
+    background-color: rgba(255, 99, 71,0.5);
   }
+  opacity: 1;
+  animation: fade 2s linear;
 }

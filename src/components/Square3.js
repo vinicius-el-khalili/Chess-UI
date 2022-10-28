@@ -6,6 +6,24 @@ class Square extends React.Component{
             piece:props.game.get(props._sqr),
             color:props.color
         }
+        this.unicodes={
+            'wk':'\u2654',
+            'wq':'\u2655',
+            'wr':'\u2656',
+            'wb':'\u2657',
+            'wn':'\u2658',
+            'wp':'\u2659',
+            'bk':'\u265A',
+            'bq':'\u265B',
+            'br':'\u265C',
+            'bb':'\u265D',
+            'bn':'\u265E',
+            'bp':'\u265F',
+
+        }
+    }
+    renderPiece(p){
+
     }
     update(){
         this.setState({
@@ -14,9 +32,15 @@ class Square extends React.Component{
     }
     render(){
         return(
-            <div className="Square" key={this.props._sqr} style={{backgroundColor:this.state.color}}>
-                {this.props._sqr}<br/>
-                {this.state.piece.type}
+            <div 
+            className="Square"
+            key={this.props._sqr}
+            style={{backgroundColor:this.state.color}}
+            >
+                
+                {this.state.piece && 
+                    <div className="Piece">{this.unicodes[this.state.piece.color+this.state.piece.type]}</div>
+                    }
                 </div>
         )
     }
