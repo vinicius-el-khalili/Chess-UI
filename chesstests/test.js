@@ -1,4 +1,15 @@
-console.log("\n\n")
 const Chess = require('chess.js')
 const chess = new Chess.Chess()
-console.log(chess.get('a4'))
+const c = stuff=>console.log(stuff)
+chess.move("e4")
+chess.move("g5")
+chess.move("a3")
+chess.move("g5")
+chess.move("f6")
+moves=chess.moves({square:"d1"})
+console.log(moves)
+let _sqr="g4"
+moves.forEach(move=>{
+    let _m = move.length<3?move:move.slice(1,3)
+    console.log(move,_m,_sqr,_m===_sqr)
+})

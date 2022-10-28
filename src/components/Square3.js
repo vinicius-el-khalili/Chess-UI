@@ -33,7 +33,10 @@ class Square extends React.Component{
             color:this.defaultColor
         })
     }
-
+    debug(){this.setState({color:"rgba(0,0,0,0.5)"})}
+    addMover(){
+        this.setState({preMoveHilight:true})
+    }
     // --------------------------------------- RENDER
     render(){
         return(<>
@@ -41,16 +44,9 @@ class Square extends React.Component{
                 className="Square"
                 key={this.props._sqr}
                 style={{backgroundColor:this.state.color}}
+                onClick={()=>{this.board.handleSquareClick(this._sqr)}}
                 >
-                    
-                    {(this.state.preMoveHilight && !this.state.piece) &&
-                        <Mover />
-                    }
 
-
-                    {(this.state.preMoveHilight && this.state.piece) &&
-                        <Mover />
-                    }
 
                     {this.state.piece && 
                         <Piece 
@@ -59,6 +55,16 @@ class Square extends React.Component{
                         board={this.board}
                         square={this}
                         />}
+
+                    {(this.state.preMoveHilight) &&
+                        <Mover board={this.props.board} _sqr={this._sqr}/>
+                    }
+
+
+                    {(this.state.preMoveHilight && this.state.piece) &&
+                        <Mover board={this.props.board} _sqr={this._sqr}/>
+                    }
+
                     
             </div>
         </>)

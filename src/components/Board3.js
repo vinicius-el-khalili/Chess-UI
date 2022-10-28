@@ -18,10 +18,11 @@ class Board extends React.Component{
     constructor(){
         super()
         this.state={
-            player:"white",
+            console:"console",
             boardOrientation:"white",
             layout:layout.white,
-            game:new Chess()
+            game:new Chess(),
+            selectedSquare:null
         }
         this.flipBoard=this.flipBoard.bind(this)
         this.movePiece=this.movePiece.bind(this)
@@ -44,28 +45,56 @@ class Board extends React.Component{
             this.setState({layout:layout.white, boardOrientation:"white"})
         }
     }
-
-    // --------------------------------------- HANDLE PIECE CLICK
-    handlePieceClick(_sqr){
-    }
     
     // --------------------------------------- HANDLE SQUARE CLICK
     handleSquareClick(_sqr){
 
     }
+    
+    // --------------------------------------- HANDLE PIECE CLICK
+    handlePieceClick(_sqr){
+        
+        this.clear()
+        const moves = this.state.game.moves({square:_sqr})
+        this.setState({msg:moves})
+        moves.forEach(move=>{
+            let _m = move.length<3?move:move.slice(1,3)
+            this.reff[_m].current.addMover()
+        })
+        this.setState({selectedSquare:_sqr})
+        this.setState({console:moves})
+    }
+    
+    // --------------------------------------- HANDLE MOVER CLICK
+    handleMoverClick(_sqr){
+
+        this.reff[_sqr].current.debug()
+        const moves = this.state.game.moves({square:this.state.selectedSquare})
+        moves.forEach(move=>{
+            let _m = move.length<3?move:move.slice(1,3)
+            if (_m===_sqr){
+                this.state.game.move(move)
+                this.update()
+            }
+        })
+        this.clear()
+
+    }
 
     // --------------------------------------- MOVE PIECE
     movePiece(){
+        
         this.state.game.move("e4")
+        this.state.game.move("e5")
         this._SQRS.forEach(_sqr=>{
             this.reff[_sqr].current.update()
         })
+        this.clear()
     }
 
-    // --------------------------------------- CLEAR
-    clear(){
-        this._SQRS.forEach(_sqr=>this.reff[_sqr].current.clear())
-    }
+    // --------------------------------------- UTILITIES
+    clear(){this._SQRS.forEach(_sqr=>this.reff[_sqr].current.clear())}
+    update(){this._SQRS.forEach(_sqr=>this.reff[_sqr].current.update())}
 
     // --------------------------------------- RENDER
     render(){
@@ -75,7 +104,8 @@ class Board extends React.Component{
             for (let j=0;j<=7;j++){
                 let _sqr = "abcdefgh"[i]+"12345678"[j]
                 row.push(
-                    <Square 
+
+                    <Square // --------------------------------------- />
                     _sqr={_sqr}
                     ref={this.reff[_sqr]}
                     game={this.state.game}
@@ -95,10 +125,11 @@ class Board extends React.Component{
             <div className="Board" style={this.state.layout.board}>
                 {container} 
             </div>
+            <div>
             <button onClick={this.flipBoard}>Flip Board</button>
-            <h3>Board side: {this.state.boardOrientation}</h3>
             <button onClick={this.movePiece}>Move piece</button>
-
+            <p>{this.state.console}</p>
+            </div>
             </>
         )
     }
