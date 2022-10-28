@@ -46,6 +46,9 @@ class Board extends React.Component{
     }
 
     // --------------------------------------- MOVE PIECE
+    hilightMoves(_sqr){
+        this.reff[_sqr].current.setColor("tomato")
+    }
     movePiece(){
         this.state.game.move("e4")
         this._SQRS.forEach(_sqr=>{
@@ -66,6 +69,7 @@ class Board extends React.Component{
                     ref={this.reff[_sqr]}
                     game={this.state.game}
                     color={(i+j)%2!==0 ? "white" : "cornflowerblue"}
+                    board={this}
                     />
                 )
             }
@@ -75,7 +79,7 @@ class Board extends React.Component{
                     </div>
             )
         }
-{}        return(
+        return(
             <>
             <div className="Board" style={this.state.layout.board}>
                 {container} 
