@@ -20,6 +20,11 @@ body {
   display: flex;
   justify-content: center;
   align-items: center; }
+  .Square .sqrName {
+    position: fixed;
+    padding-bottom: 35px;
+    padding-right: 30px;
+    opacity: 0.5; }
   .Square .preMoveEmpty {
     position: fixed;
     width: 20px;

@@ -93,7 +93,11 @@ class Board extends React.Component{
     }
 
     // --------------------------------------- UTILITIES
-    clear(){this._SQRS.forEach(_sqr=>this.reff[_sqr].current.clear())}
+    clear(){
+        this._SQRS.forEach(_sqr=>this.reff[_sqr].current.clear())
+        this.setState({selectedSquare:null})
+    }
+        
     update(){this._SQRS.forEach(_sqr=>this.reff[_sqr].current.update())}
 
     // --------------------------------------- RENDER
@@ -128,7 +132,10 @@ class Board extends React.Component{
             <div>
             <button onClick={this.flipBoard}>Flip Board</button>
             <button onClick={this.movePiece}>Move piece</button>
-            <p>{this.state.console}</p>
+            <p><strong>Possible Moves: </strong>{this.state.console}</p>
+            <br /><p><strong>Selected Square: </strong>{this.state.selectedSquare}</p>
+            <br /><strong>Board:</strong>
+            <br /><div style={{whiteSpace:"pre-line"}}>{this.state.game.ascii().replaceAll('.',"_")}</div>
             </div>
             </>
         )
