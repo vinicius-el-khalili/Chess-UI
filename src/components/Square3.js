@@ -39,8 +39,7 @@ class Square extends React.Component{
             >
                 
                 {this.state.piece && 
-                    <div className="Piece">{this.unicodes[this.state.piece.color+this.state.piece.type]}</div>
-                    }
+                    <p className="Piece">#</p>}
                 </div>
         )
     }
