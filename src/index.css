@@ -49,4 +49,21 @@ body {
   .Piece:hover {
     background-color: rgba(255, 99, 71, 0.5); }
 
+.Mover {
+  position: fixed;
+  width: 50px;
+  height: 50px;
+  border-radius: 3px;
+  z-index: 3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer; }
+  .Mover:hover {
+    background-color: rgba(73, 213, 65, 0.5); }
+  .Mover .MoverMarker {
+    width: 40px;
+    height: 40px;
+    border: 1px solid black; }
+
 /*# sourceMappingURL=index.css.map */

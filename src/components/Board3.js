@@ -45,15 +45,26 @@ class Board extends React.Component{
         }
     }
 
-    // --------------------------------------- MOVE PIECE
-    hilightMoves(_sqr){
-        this.reff[_sqr].current.setColor("tomato")
+    // --------------------------------------- HANDLE PIECE CLICK
+    handlePieceClick(_sqr){
     }
+    
+    // --------------------------------------- HANDLE SQUARE CLICK
+    handleSquareClick(_sqr){
+
+    }
+
+    // --------------------------------------- MOVE PIECE
     movePiece(){
         this.state.game.move("e4")
         this._SQRS.forEach(_sqr=>{
             this.reff[_sqr].current.update()
         })
+    }
+
+    // --------------------------------------- CLEAR
+    clear(){
+        this._SQRS.forEach(_sqr=>this.reff[_sqr].current.clear())
     }
 
     // --------------------------------------- RENDER

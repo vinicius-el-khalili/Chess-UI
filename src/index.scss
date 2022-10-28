@@ -60,3 +60,23 @@ body{
   }
   z-index: 2;
 }
+
+.Mover{
+  position: fixed;
+  width: 50px;
+  height: 50px;
+  border-radius: 3px;
+  z-index: 3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  &:hover{
+    background-color: rgba(73, 213, 65, 0.5);
+  }
+  .MoverMarker{
+    width: 40px;
+    height: 40px;
+    border: 1px solid black;
+  }
+}

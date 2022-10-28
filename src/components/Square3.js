@@ -1,6 +1,8 @@
 import React from "react";
 import Piece from "./Piece3";
+import Mover from "./Mover";
 class Square extends React.Component{
+    // --------------------------------------- CONSTRUCTOR
     constructor(props){
         super(props)
         this.state={
@@ -17,16 +19,22 @@ class Square extends React.Component{
         this._sqr=props._sqr
     }
 
+    // --------------------------------------- UPDATE
     update(){
         this.setState({
             piece:this.props.game.get(this.props._sqr)
         })
     }
 
-    setColor(color){
-        this.setState({color:color})
+    // --------------------------------------- CLEAR
+    clear(){
+        this.setState({
+            preMoveHilight:false,
+            color:this.defaultColor
+        })
     }
 
+    // --------------------------------------- RENDER
     render(){
         return(<>
             <div 
@@ -36,12 +44,12 @@ class Square extends React.Component{
                 >
                     
                     {(this.state.preMoveHilight && !this.state.piece) &&
-                        <div className="preMoveEmpty"></div>
+                        <Mover />
                     }
 
 
                     {(this.state.preMoveHilight && this.state.piece) &&
-                        <div className="preMoveOccupied"></div>
+                        <Mover />
                     }
 
                     {this.state.piece && 
