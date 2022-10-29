@@ -1,7 +1,7 @@
 console.clear()
 const Chess = require('chess.js')
 let fen=
-'r3k2r/ppp2ppp/2nq1n2/2bppb2/2BPPB2/2NQ1N2/PPP2PPP/R3K2R w KQkq - 6 8'
+'r1bqkbnr/pppp1ppp/2n5/4p3/3PP3/5N2/PPP2PPP/RNBQKB1R b KQkq d3 0 3'
 const chess = new Chess.Chess(fen)
 
 
@@ -32,4 +32,5 @@ const sanConverter = (moves,to)=>{
     })
     return formattedMoves
 }
-console.log(sanConverter(chess.moves(), "toNotation"))
+console.log(sanConverter(chess.moves('c6'), "toNotation"))
+console.log(chess.moves({square:"c6"}))

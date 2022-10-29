@@ -30,7 +30,6 @@ class Square extends React.Component{
     clear(){
         this.setState({
             preMoveHilight:false,
-            color:this.defaultColor
         })
     }
     debug(){this.setState({color:"rgba(0,0,0,0.5)"})}

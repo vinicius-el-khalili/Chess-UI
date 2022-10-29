@@ -21,7 +21,7 @@ class Board extends React.Component{
             console:"console",
             boardOrientation:"white",
             layout:layout.white,
-            game:new Chess('r3k2r/ppp2ppp/2nq1n2/2bppb2/2BPPB2/2NQ1N2/PPP2PPP/R3K2R w KQkq - 6 8'),
+            game:new Chess(),
             selectedSquare:null,
             selectedPiece:null
         }
@@ -84,19 +84,26 @@ class Board extends React.Component{
     handlePieceClick(_sqr){
         
         this.clear()
-        const moves = this.state.game.moves({square:_sqr})
-        const SanToNotation = this.sanConverter(
-            this.state.game.moves({square:this.state.selectedSquare}),
-            "toNotation")
-        moves.forEach(move=>{
-            let _available_sqr = SanToNotation[move].slice(1,3)
-            this.reff[_available_sqr].current.addMover()
-        })
         let piece = this.state.game.get(_sqr)
         this.setState({
             selectedSquare:_sqr,
             selectedPiece:piece
         })
+        const moves = this.state.game.moves({square:_sqr})
+        const SanToNotation = this.sanConverter(
+            this.state.game.moves({_sqr}),
+            "toNotation")
+        moves.forEach(move=>{
+            let _available_sqr = SanToNotation[move].slice(1,3)
+            this.reff[_available_sqr].current.addMover()
+        })
+
+        let l=[]
+        moves.forEach(move=>{
+            let _available_sqr = SanToNotation[move].slice(1,3)
+            l.push([move,_available_sqr].join(":"))
+        })
+        this.setState({console:l.join(' ')})
     }
     
     // --------------------------------------- HANDLE MOVER CLICK
@@ -110,7 +117,6 @@ class Board extends React.Component{
             +
             _sqr
         ])
-        this.setState({console:this.state.selectedPiece.type.toUpperCase()+this.state.selectedSquare})
         this.update()
         this.clear()
 
@@ -130,7 +136,10 @@ class Board extends React.Component{
     // --------------------------------------- UTILITIES
     clear(){
         this._SQRS.forEach(_sqr=>this.reff[_sqr].current.clear())
-        this.setState({selectedSquare:null})
+        this.setState({
+            selectedSquare:null,
+            selectedPiece:null
+        })
     }
         
     update(){
