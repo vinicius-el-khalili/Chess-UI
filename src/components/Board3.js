@@ -89,10 +89,8 @@ class Board extends React.Component{
             this.state.game.moves({square:this.state.selectedSquare}),
             "toNotation")
         moves.forEach(move=>{
-            let _m
-            _m = move.replace('#','').replace('+','').replace('x','')
-            _m = _m.length===2?_m:_m.slice(1,3)
-            this.reff[_m].current.addMover()
+            let _available_sqr = SanToNotation[move].slice(1,3)
+            this.reff[_available_sqr].current.addMover()
         })
         let piece = this.state.game.get(_sqr)
         this.setState({
