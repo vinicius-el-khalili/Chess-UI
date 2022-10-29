@@ -4,10 +4,9 @@ let fen=
 'r3k2r/ppp2ppp/2nq1n2/2bppb2/2BPPB2/2NQ1N2/PPP2PPP/R3K2R w KQkq - 6 8'
 const chess = new Chess.Chess(fen)
 
-console.log('moves:',chess.moves())
 
 // -------------------------------- //
-const catchMove = (moves)=>{
+const sanConverter = (moves,to)=>{
     let formattedMoves = {}   
     moves.forEach(move=>{
         let _m = move
@@ -28,8 +27,9 @@ const catchMove = (moves)=>{
         if (_m==='O-O-O' && chess.turn()==='w'){_m = 'Kc1'}
         if (_m==='O-O-O' && chess.turn()==='b'){_m = 'Kc8'}
         
-        formattedMoves[_m] = move
+        if(to==="toSan"){formattedMoves[_m] = move}
+        if(to==="toNotation"){formattedMoves[move] = _m}
     })
     return formattedMoves
 }
-console.log(catchMove(chess.moves()))
+console.log(sanConverter(chess.moves(), "toNotation"))

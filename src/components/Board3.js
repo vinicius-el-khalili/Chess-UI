@@ -22,7 +22,8 @@ class Board extends React.Component{
             boardOrientation:"white",
             layout:layout.white,
             game:new Chess('r3k2r/ppp2ppp/2nq1n2/2bppb2/2BPPB2/2NQ1N2/PPP2PPP/R3K2R w KQkq - 6 8'),
-            selectedSquare:null
+            selectedSquare:null,
+            selectedPiece:null
         }
         this.flipBoard=this.flipBoard.bind(this)
         this.movePiece=this.movePiece.bind(this)
@@ -47,7 +48,7 @@ class Board extends React.Component{
     }
     
     // --------------------------------------- SAN MAP
-    sanMap = (moves)=>{  // personalized hashmap for the standard algebraic notation
+    sanConverter(moves,to){  // personalized hashmap for the standard algebraic notation
         let formattedMoves = {}   
         moves.forEach(move=>{
             let _m = move
@@ -55,26 +56,28 @@ class Board extends React.Component{
                 .replace('x','')
                 .replace('+','')
                 .replace('#','')
-            if (_m[0]==_m[0].toLowerCase() && _m.length===3){
+            if (_m[0]===_m[0].toLowerCase() && _m.length===3){
                 _m='P'+_m.slice(1,3)
             }
-            if(_m.length==2){
+            if(_m.length===2){
                 _m='P'+_m
             }
     
             // Castle
-            if (_m==='O-O' && this.game.turn()==='w'){_m = 'Kg1'}
-            if (_m==='O-O' && this.game.turn()==='b'){_m = 'Kg8'}
-            if (_m==='O-O-O' && this.game.turn()==='w'){_m = 'Kc1'}
-            if (_m==='O-O-O' && this.game.turn()==='b'){_m = 'Kc8'}
+            let turn = this.state.game.turn()
+            if (_m==='O-O' && turn==='w'){_m = 'Kg1'}
+            if (_m==='O-O' && turn==='b'){_m = 'Kg8'}
+            if (_m==='O-O-O' && turn==='w'){_m = 'Kc1'}
+            if (_m==='O-O-O' && turn==='b'){_m = 'Kc8'}
             
-            formattedMoves[_m] = move
+            if(to==="toSan"){formattedMoves[_m] = move}
+            if(to==="toNotation"){formattedMoves[move] = _m}
         })
         return formattedMoves
     }
     // --------------------------------------- HANDLE SQUARE CLICK
     handleSquareClick(_sqr){
-        
+
     }
     
     // --------------------------------------- HANDLE PIECE CLICK
@@ -82,29 +85,35 @@ class Board extends React.Component{
         
         this.clear()
         const moves = this.state.game.moves({square:_sqr})
-        let _p = this.state.game.get({square:_sqr})
+        const SanToNotation = this.sanConverter(
+            this.state.game.moves({square:this.state.selectedSquare}),
+            "toNotation")
         moves.forEach(move=>{
             let _m
             _m = move.replace('#','').replace('+','').replace('x','')
             _m = _m.length===2?_m:_m.slice(1,3)
             this.reff[_m].current.addMover()
         })
-        this.setState({selectedSquare:_sqr})
-        this.setState({console:moves})
+        let piece = this.state.game.get(_sqr)
+        this.setState({
+            selectedSquare:_sqr,
+            selectedPiece:piece
+        })
     }
     
     // --------------------------------------- HANDLE MOVER CLICK
     handleMoverClick(_sqr){
 
-        this.reff[_sqr].current.debug()
-        const moves = this.state.game.moves({square:this.state.selectedSquare})
-        moves.forEach(move=>{
-            let _m = move.length<3?move:move.slice(1,3)
-            if (_m===_sqr){
-                this.state.game.move(move)
-                this.update()
-            }
-        })
+        const NotationToSAN = this.sanConverter(
+            this.state.game.moves({square:this.state.selectedSquare}),
+            "toSan")
+        this.state.game.move(NotationToSAN[
+            this.state.selectedPiece.type.toUpperCase()
+            +
+            _sqr
+        ])
+        this.setState({console:this.state.selectedPiece.type.toUpperCase()+this.state.selectedSquare})
+        this.update()
         this.clear()
 
     }
@@ -126,7 +135,9 @@ class Board extends React.Component{
         this.setState({selectedSquare:null})
     }
         
-    update(){this._SQRS.forEach(_sqr=>this.reff[_sqr].current.update())}
+    update(){
+        this._SQRS.forEach(_sqr=>this.reff[_sqr].current.update())
+    }
 
     // --------------------------------------- RENDER
     render(){
@@ -160,8 +171,9 @@ class Board extends React.Component{
             <div>
             <button onClick={this.flipBoard}>Flip Board</button>
             <button onClick={this.movePiece}>Move piece</button>
-            <p><strong>Possible Moves: </strong>{this.state.console}</p>
+            <p><strong>Console: </strong>{this.state.console}</p>
             <br /><p><strong>Selected Square: </strong>{this.state.selectedSquare}</p>
+            <br /><p><strong>Selected Piece: </strong>{this.state.selectedPiece===null?"null":this.state.selectedPiece.type}</p>
             <br /><strong>Board:</strong>
             <p><strong>fen: </strong>{this.state.game.fen()}</p>
             <p><strong>msg: </strong>{this.state.msg}</p>
