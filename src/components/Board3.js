@@ -21,7 +21,7 @@ class Board extends React.Component{
             console:"console",
             boardOrientation:"white",
             layout:layout.white,
-            game:new Chess(),
+            game:new Chess('r3k2r/ppp2ppp/2nq1n2/2bppb2/2BPPB2/2NQ1N2/PPP2PPP/R3K2R w KQkq - 6 8'),
             selectedSquare:null
         }
         this.flipBoard=this.flipBoard.bind(this)
@@ -56,9 +56,11 @@ class Board extends React.Component{
         
         this.clear()
         const moves = this.state.game.moves({square:_sqr})
-        this.setState({msg:moves})
+        let _p = this.state.game.get({square:_sqr})
         moves.forEach(move=>{
-            let _m = move.length<3?move:move.slice(1,3)
+            let _m
+            _m = move.replace('#','').replace('+','').replace('x','')
+            _m = _m.length===2?_m:_m.slice(1,3)
             this.reff[_m].current.addMover()
         })
         this.setState({selectedSquare:_sqr})
@@ -135,7 +137,8 @@ class Board extends React.Component{
             <p><strong>Possible Moves: </strong>{this.state.console}</p>
             <br /><p><strong>Selected Square: </strong>{this.state.selectedSquare}</p>
             <br /><strong>Board:</strong>
-            <br /><div style={{whiteSpace:"pre-line"}}>{this.state.game.ascii().replaceAll('.',"_")}</div>
+            <p><strong>fen: </strong>{this.state.game.fen()}</p>
+            <p><strong>msg: </strong>{this.state.msg}</p>
             </div>
             </>
         )

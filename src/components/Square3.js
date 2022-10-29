@@ -8,7 +8,7 @@ class Square extends React.Component{
         this.state={
             piece:props.game.get(props._sqr),
             color:props.color,
-            preMoveHilight:true,
+            preMoveHilight:false,
         }
         this.defaultColor=props.color
         this.unicodes={
@@ -34,6 +34,8 @@ class Square extends React.Component{
         })
     }
     debug(){this.setState({color:"rgba(0,0,0,0.5)"})}
+
+    // --------------------------------------- ADD MOVER
     addMover(){
         this.setState({preMoveHilight:true})
     }
@@ -47,7 +49,7 @@ class Square extends React.Component{
                 onClick={()=>{this.board.handleSquareClick(this._sqr)}}
                 >
 
-                    <div className="sqrName">{this.props._sqr}</div>
+                    <div className="sqrName">{this.props._sqr} {this.state.preMoveHilight?1:0}</div>
 
                     {this.state.piece && 
                         <Piece 
@@ -58,11 +60,6 @@ class Square extends React.Component{
                         />}
 
                     {(this.state.preMoveHilight) &&
-                        <Mover board={this.props.board} _sqr={this._sqr}/>
-                    }
-
-
-                    {(this.state.preMoveHilight && this.state.piece) &&
                         <Mover board={this.props.board} _sqr={this._sqr}/>
                     }
 
