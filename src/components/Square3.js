@@ -49,7 +49,7 @@ class Square extends React.Component{
                 onClick={()=>{this.board.handleSquareClick(this._sqr)}}
                 >
 
-                    <div className="sqrName">{this.props._sqr} {this.state.preMoveHilight?1:0}</div>
+                    <div className="sqrName">{this.props._sqr}</div>
 
                     {this.state.piece && 
                         <Piece 
