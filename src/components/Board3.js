@@ -46,9 +46,35 @@ class Board extends React.Component{
         }
     }
     
+    // --------------------------------------- SAN MAP
+    sanMap = (moves)=>{  // personalized hashmap for the standard algebraic notation
+        let formattedMoves = {}   
+        moves.forEach(move=>{
+            let _m = move
+            _m = _m
+                .replace('x','')
+                .replace('+','')
+                .replace('#','')
+            if (_m[0]==_m[0].toLowerCase() && _m.length===3){
+                _m='P'+_m.slice(1,3)
+            }
+            if(_m.length==2){
+                _m='P'+_m
+            }
+    
+            // Castle
+            if (_m==='O-O' && this.game.turn()==='w'){_m = 'Kg1'}
+            if (_m==='O-O' && this.game.turn()==='b'){_m = 'Kg8'}
+            if (_m==='O-O-O' && this.game.turn()==='w'){_m = 'Kc1'}
+            if (_m==='O-O-O' && this.game.turn()==='b'){_m = 'Kc8'}
+            
+            formattedMoves[_m] = move
+        })
+        return formattedMoves
+    }
     // --------------------------------------- HANDLE SQUARE CLICK
     handleSquareClick(_sqr){
-
+        
     }
     
     // --------------------------------------- HANDLE PIECE CLICK
