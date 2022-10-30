@@ -82,6 +82,11 @@ class Board extends React.Component{
             // Superpositions
                 //  ->   this problem must be solved at component level (handleMoverClick)
 
+            // check for promotions
+            if (_m.includes("=")){
+                let _l = _m.length
+                _m = "P"+_m.slice(_l-4,_l-2)
+            }
             
             // Push string
             if(to==="toSan"){formattedMoves[_m] = move}
@@ -108,49 +113,63 @@ class Board extends React.Component{
         const moves = this.state.game.moves({square:_sqr})
                                                                             this.setState({console1:"global moves: "+this.state.game.moves().join(" | ")})
                                                                             this.setState({console2:"piece moves: "+this.state.game.moves({square:_sqr}).join(" | ")})
-
-        const SanToNotation = this.sanConverter("toNotation")
-        const NotationToSan = this.sanConverter("ToSan")
+        // Hilight available moves
         moves.forEach(move=>{
+            
+            //  ->  extract square string & update components
             let _m = move
+            // remove useless notation
             .replace('x','')
             .replace('+','')
             .replace('#','')
+            // check for castling
             let turn = this.state.game.turn()
             if (_m==='O-O' && turn==='w'){_m = 'Kg1'}
             if (_m==='O-O' && turn==='b'){_m = 'Kg8'}
             if (_m==='O-O-O' && turn==='w'){_m = 'Kc1'}
             if (_m==='O-O-O' && turn==='b'){_m = 'Kc8'}
+            // check for promotions
             let _l = _m.length
-            this.reff[_m.slice(_l-2,_l)].current.addMover()
+            if (_m.includes("=")){
+                _m = _m.slice(_l-4,_l-2)
+            } else {
+                _l = _m.length
+                _m=_m.slice(_l-2,_l)
+            }
+            this.reff[_m].current.addMover()
         })
-
+        
     }
     
     // --------------------------------------- HANDLE MOVER CLICK
     handleMoverClick(_sqr){
 
+        // extract SAN syntax from chess.moves given an input in simplified notation
+        // ex.: Nd4 -> N3xd4+
         const NotationToSAN = this.sanConverter("toSan")
         let _san = NotationToSAN[
             this.state.selectedPiece.type.toUpperCase()
             +_sqr]
         
-        //  solve superpositions
-        //  ->  rank superposition
+        //      -> solve superpositions
+        //  rank superposition
         if (!_san){
-            this.setState({console1:"!_san"})
             _san = NotationToSAN[
                 this.state.selectedPiece.type.toUpperCase()
                 +this.state.selectedSquare[0]
                 +_sqr]
         }
-        //  -> row superposition
+        //  row superposition
         if (!_san){
-            this.setState({console1:"!_san"})
             _san = NotationToSAN[
                 this.state.selectedPiece.type.toUpperCase()
                 +this.state.selectedSquare[1]
                 +_sqr]
+        }
+
+        //      -> promote
+        if (!_san){
+            this.setState({console1:"!_san"})
         }
 
         this.state.game.move(_san)

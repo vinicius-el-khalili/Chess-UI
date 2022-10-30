@@ -53,7 +53,8 @@ body {
   cursor: pointer;
   z-index: 2; }
   .Piece:hover {
-    background-color: rgba(255, 99, 71, 0.5); }
+    background-color: tomato;
+    opacity: 0.5; }
 
 .Mover {
   position: fixed;
@@ -70,7 +71,8 @@ body {
   .Mover .MoverMarker {
     width: 40px;
     height: 40px;
-    border: 1px solid black; }
+    border: 1px solid black;
+    opacity: 0.4; }
 
 .console {
   width: 80vw;
