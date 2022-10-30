@@ -66,7 +66,6 @@ class Board extends React.Component{
         return _m
     }
     stringMamboJambo(move,format,_moverSqr){
-
         // -------------------------------------------------- FUNCTIONS
         const preProcess = (move) => {
             let turn = this.state.game.turn()
@@ -86,7 +85,6 @@ class Board extends React.Component{
             if (_m==='O-O-O' && turn==='b'){_m = 'Kc8'}
             return _m
         }
-
         const mapSAN = () => {
             // Object: { Simplified Notation ("Ne7") : Standard Algebraic Notation (Ngxe7#) }        
             let moves = this.state.game.moves()
@@ -103,7 +101,6 @@ class Board extends React.Component{
             })
             return map
         }
-
         // -------------------------------------------------- SQUARE
         if (format==="SQR"){
             let _m = this.preProcess(move)
@@ -187,7 +184,6 @@ class Board extends React.Component{
         // extract SAN syntax from chess.moves given an input in simplified notation
         // ex.: Nd4 -> N3xd4+
         let _san = this.stringMamboJambo(null,"SAN",_sqr)        //      -> promote
-
         this.state.game.move(_san)
         this.update()
         this.clear()
