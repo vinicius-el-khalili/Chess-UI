@@ -25,7 +25,7 @@ class Board extends React.Component{
             console5:"",
             boardOrientation:"white",
             layout:layout.white,
-            game:new Chess(),
+            game:new Chess('rnb2rk1/pp2qp1p/2p2n1p/3pp3/2BPP3/P1P2N2/P2Q1PPP/R3R1K1 w - - 3 12'),
             selectedSquare:null,
             selectedPiece:null
         }
@@ -52,7 +52,7 @@ class Board extends React.Component{
     }
     
     // --------------------------------------- SAN MAP
-    sanConverter(_sqr,to){  // personalized hashmap for the standard algebraic notation
+    sanConverter(to){  // personalized hashmap for the standard algebraic notation
         let moves = this.state.game.moves()
         let formattedMoves = {}  
         let __l=[] 
@@ -77,15 +77,12 @@ class Board extends React.Component{
             if (_m==='O-O-O' && turn==='b'){_m = 'Kc8'}
             
             // Rook bugs
-            if (_m.length===4 && _m[0]==="R"){
-                _m = "R"+_m.slice(2,4)
-            }
 
             // Push string
             if(to==="toSan"){formattedMoves[_m] = move}
             if(to==="toNotation"){formattedMoves[move] = _m}
-            __l.push([move,_m])
-                                                                            this.setState({console3:"converter: "+__l.join(' || ')})
+            __l.push(move+": "+_m)
+                                                                            this.setState({console3:"converter: "+__l.join(' | ')})
         })
         return formattedMoves
     }
@@ -107,41 +104,38 @@ class Board extends React.Component{
                                                                             this.setState({console1:"global moves: "+this.state.game.moves().join(" | ")})
                                                                             this.setState({console2:"piece moves: "+this.state.game.moves({square:_sqr}).join(" | ")})
 
-        const SanToNotation = this.sanConverter(_sqr,"toNotation")
-        const NotationToSan = this.sanConverter(_sqr,"ToSan")
+        const SanToNotation = this.sanConverter("toNotation")
+        const NotationToSan = this.sanConverter("ToSan")
         moves.forEach(move=>{
-            let _m=move
+            let _available_sqr = SanToNotation[move]
+            if (!_available_sqr){
+                // fix superposition bug
+                _available_sqr = move.slice(1,3)
 
- 
-            // Handle rooks special syntax because we're calling moves in the square
-            // calling chess.moves({square}) -> Rb1
-            // calling chess.moves() -> Reb1 *this is the format we want
-
-
-            let _available_sqr = SanToNotation[_m].slice(1,3)
+            } else{
+                _available_sqr=_available_sqr.slice(1,3)
+            }
             this.reff[_available_sqr].current.addMover()
         })
 
-        //this.setState({console:this.state.game.moves({square:_sqr}).join(",")})
-
-        let l=[]
-        moves.forEach(move=>{
-            let _available_sqr = SanToNotation[move].slice(1,3)
-            l.push([move,_available_sqr].join(":"))
-        })
     }
     
     // --------------------------------------- HANDLE MOVER CLICK
     handleMoverClick(_sqr){
 
-        const NotationToSAN = this.sanConverter(
-            this.state.game.moves({square:this.state.selectedSquare}),
-            "toSan")
-        this.state.game.move(NotationToSAN[
+        const NotationToSAN = this.sanConverter("toSan")
+        let _san = NotationToSAN[
             this.state.selectedPiece.type.toUpperCase()
-            +
-            _sqr
-        ])
+            +_sqr]
+        if (!_san){
+            // fix superposition bug
+            this.setState({console1:"!_san"})
+            _san = NotationToSAN[
+                this.state.selectedPiece.type.toUpperCase()
+                +this.state.selectedSquare[0]
+                +_sqr]
+        }
+        this.state.game.move(_san)
         this.update()
         this.clear()
 
