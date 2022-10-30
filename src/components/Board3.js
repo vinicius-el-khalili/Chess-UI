@@ -116,6 +116,8 @@ class Board extends React.Component{
                     +this.state.selectedSquare[1]
                     +_moverSqr]
             }
+            //  pawn superposition
+
             return _san
         }
 
