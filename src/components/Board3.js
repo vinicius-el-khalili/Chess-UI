@@ -119,7 +119,7 @@ class Board extends React.Component{
         }
         // -------------------------------------------------- SAN
         if (format==="SAN"){
-            const NotationToSAN = this.mapSAN()
+            const NotationToSAN = mapSAN()
             let _san = NotationToSAN[
                 this.state.selectedPiece.type.toUpperCase()
                 +_moverSqr]
@@ -175,19 +175,7 @@ class Board extends React.Component{
         const moves = this.state.game.moves({square:_sqr})
         // Add movers
         moves.forEach(move=>{            
-            // Extract square ("e7") for all possible formats of moves in Standard Algebraic Notation ("Ngxe7#")
-            // ex.: "Ngxe7#" --> "e7"
-
-            let _m = this.preProcess(move)
-            // check for promotions
-            if (_m.includes("=")){
-                let _l = _m.length
-                _m = _m.slice(_l-4,_l-2)
-            } else {
-                let _l = _m.length
-                _m = _m.slice(_l-2,_l)
-            }
-            //      -> Add mover
+            let _m = this.stringMamboJambo(move,"SQR",null) // "Ngxe7#" --> "e7"
             this.reff[_m].current.addMover()
         })
         
@@ -198,28 +186,7 @@ class Board extends React.Component{
 
         // extract SAN syntax from chess.moves given an input in simplified notation
         // ex.: Nd4 -> N3xd4+
-        const NotationToSAN = this.NotationToSAN()
-        let _san = NotationToSAN[
-            this.state.selectedPiece.type.toUpperCase()
-            +_sqr]
-        
-        //      -> solve superpositions
-        //  rank superposition
-        if (!_san){
-            _san = NotationToSAN[
-                this.state.selectedPiece.type.toUpperCase()
-                +this.state.selectedSquare[0]
-                +_sqr]
-        }
-        //  row superposition
-        if (!_san){
-            _san = NotationToSAN[
-                this.state.selectedPiece.type.toUpperCase()
-                +this.state.selectedSquare[1]
-                +_sqr]
-        }
-
-        //      -> promote
+        let _san = this.stringMamboJambo(null,"SAN",_sqr)        //      -> promote
 
         this.state.game.move(_san)
         this.update()
