@@ -25,7 +25,6 @@ class Board extends React.Component{
             selectedPiece:null
         }
         this.flipBoard=this.flipBoard.bind(this)
-        this.movePiece=this.movePiece.bind(this)
         this.reff={}
         this._SQRS = []
         for (let i=0;i<=7;i++){
@@ -36,9 +35,8 @@ class Board extends React.Component{
         }
     }
 
-    
     // --------------------------------------- FLIP BOARD
-    flipBoard(color){
+    flipBoard(){
         if(this.state.boardOrientation==="white"){
             this.setState({layout:layout.black, boardOrientation:"black"})
         } else {
@@ -47,15 +45,31 @@ class Board extends React.Component{
     }
     
     // --------------------------------------- SAN MAP
-    NotationToSAN(){
-        // returns a hashmap {SN:SNA} for all current possible moves, except for superpositions
-
-        let moves = this.state.game.moves()
-        let formattedMoves = {}  
+    preProcess(move){
+        // Convert Simplified Notation ("Ne7") to Standard Algebraic Notation (Ngxe7#)        
         let turn = this.state.game.turn()
-        let __l=[] 
-        moves.forEach(move=>{
-            // Convert Simplified Notation ("Ne7") to Standard Algebraic Notation (Ngxe7#)        
+        let _l
+        let _m = move
+        _m = _m
+        // remove useless notation
+        .replace('x','')
+        .replace('+','')
+        .replace('#','')            
+        // Pawns
+        if (_m[0]===_m[0].toLowerCase() && _m.length===3){_m='P'+_m.slice(1,3)}
+        if(_m.length===2){_m='P'+_m}    
+        // check for castling
+        if (_m==='O-O' && turn==='w'){_m = 'Kg1'}
+        if (_m==='O-O' && turn==='b'){_m = 'Kg8'}
+        if (_m==='O-O-O' && turn==='w'){_m = 'Kc1'}
+        if (_m==='O-O-O' && turn==='b'){_m = 'Kc8'}
+        return _m
+    }
+    stringMamboJambo(move,format,_moverSqr){
+
+        // -------------------------------------------------- FUNCTIONS
+        const preProcess = (move) => {
+            let turn = this.state.game.turn()
             let _m = move
             _m = _m
             // remove useless notation
@@ -70,25 +84,85 @@ class Board extends React.Component{
             if (_m==='O-O' && turn==='b'){_m = 'Kg8'}
             if (_m==='O-O-O' && turn==='w'){_m = 'Kc1'}
             if (_m==='O-O-O' && turn==='b'){_m = 'Kc8'}
+            return _m
+        }
+
+        const mapSAN = () => {
+            // Object: { Simplified Notation ("Ne7") : Standard Algebraic Notation (Ngxe7#) }        
+            let moves = this.state.game.moves()
+            let map = {}  
+            moves.forEach(move=>{
+                let _m = preProcess(move)
+                // check for promotions
+                if (_m.includes("=")){
+                    let _l = _m.length
+                    _m = "P"+_m.slice(_l-4,_l-2)
+                }
+                // Push string
+                map[_m] = move
+            })
+            return map
+        }
+
+        // -------------------------------------------------- SQUARE
+        if (format==="SQR"){
+            let _m = this.preProcess(move)
+            // check for promotions
+            if (_m.includes("=")){
+                let _l = _m.length
+                _m = _m.slice(_l-4,_l-2)
+            } else {
+                let _l = _m.length
+                _m = _m.slice(_l-2,_l)
+            }
+            return _m
+        }
+        // -------------------------------------------------- SAN
+        if (format==="SAN"){
+            const NotationToSAN = this.mapSAN()
+            let _san = NotationToSAN[
+                this.state.selectedPiece.type.toUpperCase()
+                +_moverSqr]
+            
+            //      -> solve superpositions
+            //  rank superposition
+            if (!_san){
+                _san = NotationToSAN[
+                    this.state.selectedPiece.type.toUpperCase()
+                    +this.state.selectedSquare[0]
+                    +_moverSqr]
+            }
+            //  row superposition
+            if (!_san){
+                _san = NotationToSAN[
+                    this.state.selectedPiece.type.toUpperCase()
+                    +this.state.selectedSquare[1]
+                    +_moverSqr]
+            }
+            return _san
+        }
+
+    }
+    NotationToSAN(){
+        // returns a hashmap {SN:SNA} for all current possible moves, except for superpositions
+
+        let moves = this.state.game.moves()
+        let formattedMoves = {}  
+        let turn = this.state.game.turn()
+        moves.forEach(move=>{
+            // Convert Simplified Notation ("Ne7") to Standard Algebraic Notation (Ngxe7#)        
+            let _m = this.preProcess(move)
             // check for promotions
             if (_m.includes("=")){
                 let _l = _m.length
                 _m = "P"+_m.slice(_l-4,_l-2)
             }
-            // Superpositions -> handleMoverClick
-
             // Push string
             formattedMoves[_m] = move
-            __l.push(move+": "+_m)
-                                                                            this.setState({console3:"converter: "+__l.join(' | ')})
         })
         return formattedMoves
     }
-    // --------------------------------------- HANDLE SQUARE CLICK
-    handleSquareClick(_sqr){
 
-    }
-    
     // --------------------------------------- HANDLE PIECE CLICK
     handlePieceClick(_sqr){
         
@@ -99,32 +173,19 @@ class Board extends React.Component{
             selectedPiece:piece
         })
         const moves = this.state.game.moves({square:_sqr})
-                                                                            this.setState({console1:"global moves: "+this.state.game.moves().join(" | ")})
-                                                                            this.setState({console2:"piece moves: "+this.state.game.moves({square:_sqr}).join(" | ")})
         // Add movers
         moves.forEach(move=>{            
             // Extract square ("e7") for all possible formats of moves in Standard Algebraic Notation ("Ngxe7#")
             // ex.: "Ngxe7#" --> "e7"
 
-            let _l
-            let turn = this.state.game.turn()
-            let _m = move
-            // remove useless notation
-            .replace('x','')
-            .replace('+','')
-            .replace('#','')
-            // check for castling
-            if (_m==='O-O' && turn==='w'){_m = 'Kg1'}
-            if (_m==='O-O' && turn==='b'){_m = 'Kg8'}
-            if (_m==='O-O-O' && turn==='w'){_m = 'Kc1'}
-            if (_m==='O-O-O' && turn==='b'){_m = 'Kc8'}
+            let _m = this.preProcess(move)
             // check for promotions
             if (_m.includes("=")){
-                _l = _m.length
+                let _l = _m.length
                 _m = _m.slice(_l-4,_l-2)
             } else {
-                _l = _m.length
-                _m=_m.slice(_l-2,_l)
+                let _l = _m.length
+                _m = _m.slice(_l-2,_l)
             }
             //      -> Add mover
             this.reff[_m].current.addMover()
@@ -159,9 +220,6 @@ class Board extends React.Component{
         }
 
         //      -> promote
-        if (!_san){
-            this.setState({console1:"!_san"})
-        }
 
         this.state.game.move(_san)
         this.update()
@@ -169,18 +227,7 @@ class Board extends React.Component{
 
     }
 
-    // --------------------------------------- MOVE PIECE
-    movePiece(){
-        
-        this.state.game.move("e4")
-        this.state.game.move("e5")
-        this._SQRS.forEach(_sqr=>{
-            this.reff[_sqr].current.update()
-        })
-        this.clear()
-    }
-
-    // --------------------------------------- UTILITIES
+    // --------------------------------------- CLEAR
     clear(){
         this._SQRS.forEach(_sqr=>this.reff[_sqr].current.clear())
         this.setState({
@@ -189,6 +236,7 @@ class Board extends React.Component{
         })
     }
         
+    // --------------------------------------- UPDATE
     update(){
         this._SQRS.forEach(_sqr=>this.reff[_sqr].current.update())
     }
@@ -221,19 +269,6 @@ class Board extends React.Component{
             <>
             <div className="Board" style={this.state.layout.board}>
                 {container} 
-            </div>
-            <div>
-            <button onClick={this.flipBoard}>Flip Board</button>
-            <button onClick={this.movePiece}>Move piece</button>
-            <p className="console">...<br/>{this.state.console1}</p>
-            <p className="console">...<br/>{this.state.console2}</p>
-            <p className="console">...<br/>{this.state.console3}</p>
-            <p className="console">...<br/>{this.state.console4}</p>
-            <p className="console">...<br/>{this.state.console5}</p>
-            <br /><p className="console"><strong>Selected Square: </strong>{this.state.selectedSquare}</p>
-            <br /><p className="console"><strong>Selected Piece: </strong>{this.state.selectedPiece===null?"null":this.state.selectedPiece.type}</p>
-            <p className="console"><strong>fen: </strong>{this.state.game.fen()}</p>
-            <p className="console"><strong>msg: </strong>{this.state.msg}</p>
             </div>
             </>
         )
