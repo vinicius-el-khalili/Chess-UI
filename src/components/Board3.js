@@ -43,29 +43,8 @@ class Board extends React.Component{
             this.setState({layout:layout.white, boardOrientation:"white"})
         }
     }
-    
-    // --------------------------------------- SAN MAP
-    preProcess(move){
-        // Convert Simplified Notation ("Ne7") to Standard Algebraic Notation (Ngxe7#)        
-        let turn = this.state.game.turn()
-        let _l
-        let _m = move
-        _m = _m
-        // remove useless notation
-        .replace('x','')
-        .replace('+','')
-        .replace('#','')            
-        // Pawns
-        if (_m[0]===_m[0].toLowerCase() && _m.length===3){_m='P'+_m.slice(1,3)}
-        if(_m.length===2){_m='P'+_m}    
-        // check for castling
-        if (_m==='O-O' && turn==='w'){_m = 'Kg1'}
-        if (_m==='O-O' && turn==='b'){_m = 'Kg8'}
-        if (_m==='O-O-O' && turn==='w'){_m = 'Kc1'}
-        if (_m==='O-O-O' && turn==='b'){_m = 'Kc8'}
-        return _m
-    }
-    stringMamboJambo(move,format,_moverSqr){
+    // --------------------------------------- STRING MAMBO JAMBO
+    stringConverter(move,format,_moverSqr){
         // -------------------------------------------------- FUNCTIONS
         const preProcess = (move) => {
             let turn = this.state.game.turn()
@@ -103,7 +82,7 @@ class Board extends React.Component{
         }
         // -------------------------------------------------- SQUARE
         if (format==="SQR"){
-            let _m = this.preProcess(move)
+            let _m = preProcess(move)
             // check for promotions
             if (_m.includes("=")){
                 let _l = _m.length
@@ -140,54 +119,26 @@ class Board extends React.Component{
         }
 
     }
-    NotationToSAN(){
-        // returns a hashmap {SN:SNA} for all current possible moves, except for superpositions
-
-        let moves = this.state.game.moves()
-        let formattedMoves = {}  
-        let turn = this.state.game.turn()
-        moves.forEach(move=>{
-            // Convert Simplified Notation ("Ne7") to Standard Algebraic Notation (Ngxe7#)        
-            let _m = this.preProcess(move)
-            // check for promotions
-            if (_m.includes("=")){
-                let _l = _m.length
-                _m = "P"+_m.slice(_l-4,_l-2)
-            }
-            // Push string
-            formattedMoves[_m] = move
-        })
-        return formattedMoves
-    }
 
     // --------------------------------------- HANDLE PIECE CLICK
     handlePieceClick(_sqr){
-        
         this.clear()
-        let piece = this.state.game.get(_sqr)
         this.setState({
             selectedSquare:_sqr,
-            selectedPiece:piece
+            selectedPiece:this.state.game.get(_sqr)
         })
         const moves = this.state.game.moves({square:_sqr})
-        // Add movers
         moves.forEach(move=>{            
-            let _m = this.stringMamboJambo(move,"SQR",null) // "Ngxe7#" --> "e7"
+            let _m = this.stringConverter(move,"SQR",null) // "Ngxe7+" --> "e7"
             this.reff[_m].current.addMover()
         })
-        
     }
     
     // --------------------------------------- HANDLE MOVER CLICK
     handleMoverClick(_sqr){
-
-        // extract SAN syntax from chess.moves given an input in simplified notation
-        // ex.: Nd4 -> N3xd4+
-        let _san = this.stringMamboJambo(null,"SAN",_sqr)        //      -> promote
+        let _san = this.stringConverter(null,"SAN",_sqr) // "Pd8" -> "exd8=Q#"
         this.state.game.move(_san)
         this.update()
-        this.clear()
-
     }
 
     // --------------------------------------- CLEAR
@@ -202,6 +153,7 @@ class Board extends React.Component{
     // --------------------------------------- UPDATE
     update(){
         this._SQRS.forEach(_sqr=>this.reff[_sqr].current.update())
+        this.clear()
     }
 
     // --------------------------------------- RENDER
