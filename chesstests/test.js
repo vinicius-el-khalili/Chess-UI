@@ -43,6 +43,4 @@ chess.move("Rab1")
 console.log(chess.moves({square:"a1"}))
 console.log(chess.ascii())
 
-const name ="123456"
-let l = name.length
-console.log(name.slice(l-2,l))
+console.log(chess.history())

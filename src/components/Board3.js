@@ -22,7 +22,8 @@ class Board extends React.Component{
             layout:layout.white,
             game:new Chess(),
             selectedSquare:null,
-            selectedPiece:null
+            selectedPiece:null,
+            console:null,
         }
         this.flipBoard=this.flipBoard.bind(this)
         this.reff={}
@@ -124,9 +125,15 @@ class Board extends React.Component{
     handlePieceClick(_sqr){
         
         this.clear()
+        let _pm = this.state.game.moves({square:_sqr}).join(',')
+        let _gm = this.state.game.moves().join(',')
         this.setState({
             selectedSquare:_sqr,
-            selectedPiece:this.state.game.get(_sqr)
+            selectedPiece:this.state.game.get(_sqr),
+            console:{
+                globalmoves:'global moves: '+_gm,
+                piecemoves:'global moves: '+_pm
+            }
         })
         const moves = this.state.game.moves({square:_sqr})
         moves.forEach(move=>{            
@@ -147,12 +154,14 @@ class Board extends React.Component{
         this._SQRS.forEach(_sqr=>this.reff[_sqr].current.clear())
         this.setState({
             selectedSquare:null,
-            selectedPiece:null
+            selectedPiece:null,
         })
+
     }
         
     // --------------------------------------- UPDATE
     update(){
+
         this._SQRS.forEach(_sqr=>this.reff[_sqr].current.update())
         this.clear()
     }
@@ -186,6 +195,8 @@ class Board extends React.Component{
             <div className="Board" style={this.state.layout.board}>
                 {container} 
             </div>
+            <div className="console">{this.state.console?this.state.console.globalmoves:null}</div>
+            <div className="console">{this.state.console?this.state.console.piecemoves:null}</div>
             </>
         )
     }
