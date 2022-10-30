@@ -122,6 +122,7 @@ class Board extends React.Component{
 
     // --------------------------------------- HANDLE PIECE CLICK
     handlePieceClick(_sqr){
+        
         this.clear()
         this.setState({
             selectedSquare:_sqr,
