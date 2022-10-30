@@ -26,7 +26,7 @@ class Board extends React.Component{
             boardOrientation:"white",
             layout:layout.white,
 //            game:new Chess("rnb1k2r/p1P1bppp/5n2/1p6/3N4/1qN1B3/PPP2PPP/R2QKB1R w KQkq - 1 10"),
-            game:new Chess("rnb1k2r/p1Pn1ppp/8/1N6/3b4/1N5P/PPP1BPP1/R2QK2R w KQkq - 1 16"),
+            game:new Chess(),
             selectedSquare:null,
             selectedPiece:null
         }
@@ -80,14 +80,13 @@ class Board extends React.Component{
             if (_m==='O-O-O' && turn==='b'){_m = 'Kc8'}
             
             // Superpositions
-                //  ->   this problem must be solved at component level (handleMoverClick)
+                //  ->   this problem must be solved at handleMoverClick
 
             // check for promotions
             if (_m.includes("=")){
                 let _l = _m.length
                 _m = "P"+_m.slice(_l-4,_l-2)
             }
-            
             // Push string
             if(to==="toSan"){formattedMoves[_m] = move}
             if(to==="toNotation"){formattedMoves[move] = _m}
