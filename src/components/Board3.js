@@ -25,7 +25,7 @@ class Board extends React.Component{
             console5:"",
             boardOrientation:"white",
             layout:layout.white,
-            game:new Chess('rnb2rk1/pp2qp1p/2p2n1p/3pp3/2BPP3/P1P2N2/P2Q1PPP/R3R1K1 w - - 3 12'),
+            game:new Chess("rnb1k2r/p1P1bppp/5n2/1p6/3N4/1qN1B3/PPP2PPP/R2QKB1R w KQkq - 1 10"),
             selectedSquare:null,
             selectedPiece:null
         }
@@ -59,9 +59,11 @@ class Board extends React.Component{
         moves.forEach(move=>{
             let _m = move
             _m = _m
-                .replace('x','')
-                .replace('+','')
-                .replace('#','')
+            .replace('x','')
+            .replace('+','')
+            .replace('#','')
+            
+            // pawns
             if (_m[0]===_m[0].toLowerCase() && _m.length===3){
                 _m='P'+_m.slice(1,3)
             }
@@ -76,8 +78,10 @@ class Board extends React.Component{
             if (_m==='O-O-O' && turn==='w'){_m = 'Kc1'}
             if (_m==='O-O-O' && turn==='b'){_m = 'Kc8'}
             
-            // Rook bugs
+            // Superpositions bugs
+                //  ->   this problem must be solved at component level
 
+            
             // Push string
             if(to==="toSan"){formattedMoves[_m] = move}
             if(to==="toNotation"){formattedMoves[move] = _m}
@@ -107,15 +111,12 @@ class Board extends React.Component{
         const SanToNotation = this.sanConverter("toNotation")
         const NotationToSan = this.sanConverter("ToSan")
         moves.forEach(move=>{
-            let _available_sqr = SanToNotation[move]
-            if (!_available_sqr){
-                // fix superposition bug
-                _available_sqr = move.slice(1,3)
-
-            } else{
-                _available_sqr=_available_sqr.slice(1,3)
-            }
-            this.reff[_available_sqr].current.addMover()
+            let _m = move
+            .replace('x','')
+            .replace('+','')
+            .replace('#','')
+            let _l = _m.length
+            this.reff[_m.slice(_l-2,_l)].current.addMover()
         })
 
     }
