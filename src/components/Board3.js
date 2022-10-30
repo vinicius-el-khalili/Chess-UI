@@ -25,7 +25,8 @@ class Board extends React.Component{
             console5:"",
             boardOrientation:"white",
             layout:layout.white,
-            game:new Chess("rnb1k2r/p1P1bppp/5n2/1p6/3N4/1qN1B3/PPP2PPP/R2QKB1R w KQkq - 1 10"),
+//            game:new Chess("rnb1k2r/p1P1bppp/5n2/1p6/3N4/1qN1B3/PPP2PPP/R2QKB1R w KQkq - 1 10"),
+            game:new Chess("rnb1k2r/p1Pn1ppp/8/1N6/3b4/1N5P/PPP1BPP1/R2QK2R w KQkq - 1 16"),
             selectedSquare:null,
             selectedPiece:null
         }
@@ -63,7 +64,7 @@ class Board extends React.Component{
             .replace('+','')
             .replace('#','')
             
-            // pawns
+            // Pawns
             if (_m[0]===_m[0].toLowerCase() && _m.length===3){
                 _m='P'+_m.slice(1,3)
             }
@@ -78,8 +79,8 @@ class Board extends React.Component{
             if (_m==='O-O-O' && turn==='w'){_m = 'Kc1'}
             if (_m==='O-O-O' && turn==='b'){_m = 'Kc8'}
             
-            // Superpositions bugs
-                //  ->   this problem must be solved at component level
+            // Superpositions
+                //  ->   this problem must be solved at component level (handleMoverClick)
 
             
             // Push string
@@ -115,6 +116,11 @@ class Board extends React.Component{
             .replace('x','')
             .replace('+','')
             .replace('#','')
+            let turn = this.state.game.turn()
+            if (_m==='O-O' && turn==='w'){_m = 'Kg1'}
+            if (_m==='O-O' && turn==='b'){_m = 'Kg8'}
+            if (_m==='O-O-O' && turn==='w'){_m = 'Kc1'}
+            if (_m==='O-O-O' && turn==='b'){_m = 'Kc8'}
             let _l = _m.length
             this.reff[_m.slice(_l-2,_l)].current.addMover()
         })
@@ -128,14 +134,25 @@ class Board extends React.Component{
         let _san = NotationToSAN[
             this.state.selectedPiece.type.toUpperCase()
             +_sqr]
+        
+        //  solve superpositions
+        //  ->  rank superposition
         if (!_san){
-            // fix superposition bug
             this.setState({console1:"!_san"})
             _san = NotationToSAN[
                 this.state.selectedPiece.type.toUpperCase()
                 +this.state.selectedSquare[0]
                 +_sqr]
         }
+        //  -> row superposition
+        if (!_san){
+            this.setState({console1:"!_san"})
+            _san = NotationToSAN[
+                this.state.selectedPiece.type.toUpperCase()
+                +this.state.selectedSquare[1]
+                +_sqr]
+        }
+
         this.state.game.move(_san)
         this.update()
         this.clear()
