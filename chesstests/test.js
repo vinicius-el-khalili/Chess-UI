@@ -1,9 +1,8 @@
 console.clear()
 const Chess = require('chess.js')
 let fen=
-'r1bqkbnr/pppp1ppp/2n5/4p3/3PP3/5N2/PPP2PPP/RNBQKB1R b KQkq d3 0 3'
+'rnb2rk1/pp2qp1p/2p2n1p/3pp3/2BPP3/P1P2N2/P2Q1PPP/R3R1K1 w - - 3 12'
 const chess = new Chess.Chess(fen)
-
 
 // -------------------------------- //
 const sanConverter = (moves,to)=>{
@@ -27,10 +26,19 @@ const sanConverter = (moves,to)=>{
         if (_m==='O-O-O' && chess.turn()==='w'){_m = 'Kc1'}
         if (_m==='O-O-O' && chess.turn()==='b'){_m = 'Kc8'}
         
+        // Rook bugs
+        if (_m.length===4 && _m[0]==="R"){
+            _m = "R"+_m.slice(2,4)
+        }
+        // Push string
         if(to==="toSan"){formattedMoves[_m] = move}
         if(to==="toNotation"){formattedMoves[move] = _m}
     })
     return formattedMoves
 }
-console.log(sanConverter(chess.moves('c6'), "toNotation"))
-console.log(chess.moves({square:"c6"}))
+
+
+console.log(sanConverter(chess.moves(), "toNotation"))
+chess.move("Rab1")
+console.log(chess.moves({square:"a1"}))
+console.log(chess.ascii())

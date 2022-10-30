@@ -72,4 +72,8 @@ body {
     height: 40px;
     border: 1px solid black; }
 
+.console {
+  width: 80vw;
+  margin: auto; }
+
 /*# sourceMappingURL=index.css.map */

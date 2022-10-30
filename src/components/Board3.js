@@ -18,7 +18,11 @@ class Board extends React.Component{
     constructor(){
         super()
         this.state={
-            console:"console",
+            console1:"",
+            console2:"",
+            console3:"",
+            console4:"",
+            console5:"",
             boardOrientation:"white",
             layout:layout.white,
             game:new Chess(),
@@ -48,8 +52,10 @@ class Board extends React.Component{
     }
     
     // --------------------------------------- SAN MAP
-    sanConverter(moves,to){  // personalized hashmap for the standard algebraic notation
-        let formattedMoves = {}   
+    sanConverter(_sqr,to){  // personalized hashmap for the standard algebraic notation
+        let moves = this.state.game.moves()
+        let formattedMoves = {}  
+        let __l=[] 
         moves.forEach(move=>{
             let _m = move
             _m = _m
@@ -70,8 +76,16 @@ class Board extends React.Component{
             if (_m==='O-O-O' && turn==='w'){_m = 'Kc1'}
             if (_m==='O-O-O' && turn==='b'){_m = 'Kc8'}
             
+            // Rook bugs
+            if (_m.length===4 && _m[0]==="R"){
+                _m = "R"+_m.slice(2,4)
+            }
+
+            // Push string
             if(to==="toSan"){formattedMoves[_m] = move}
             if(to==="toNotation"){formattedMoves[move] = _m}
+            __l.push([move,_m])
+                                                                            this.setState({console3:"converter: "+__l.join(' || ')})
         })
         return formattedMoves
     }
@@ -90,20 +104,31 @@ class Board extends React.Component{
             selectedPiece:piece
         })
         const moves = this.state.game.moves({square:_sqr})
-        const SanToNotation = this.sanConverter(
-            this.state.game.moves({_sqr}),
-            "toNotation")
+                                                                            this.setState({console1:"global moves: "+this.state.game.moves().join(" | ")})
+                                                                            this.setState({console2:"piece moves: "+this.state.game.moves({square:_sqr}).join(" | ")})
+
+        const SanToNotation = this.sanConverter(_sqr,"toNotation")
+        const NotationToSan = this.sanConverter(_sqr,"ToSan")
         moves.forEach(move=>{
-            let _available_sqr = SanToNotation[move].slice(1,3)
+            let _m=move
+
+ 
+            // Handle rooks special syntax because we're calling moves in the square
+            // calling chess.moves({square}) -> Rb1
+            // calling chess.moves() -> Reb1 *this is the format we want
+
+
+            let _available_sqr = SanToNotation[_m].slice(1,3)
             this.reff[_available_sqr].current.addMover()
         })
+
+        //this.setState({console:this.state.game.moves({square:_sqr}).join(",")})
 
         let l=[]
         moves.forEach(move=>{
             let _available_sqr = SanToNotation[move].slice(1,3)
             l.push([move,_available_sqr].join(":"))
         })
-        this.setState({console:l.join(' ')})
     }
     
     // --------------------------------------- HANDLE MOVER CLICK
@@ -178,7 +203,11 @@ class Board extends React.Component{
             <div>
             <button onClick={this.flipBoard}>Flip Board</button>
             <button onClick={this.movePiece}>Move piece</button>
-            <p><strong>Console: </strong>{this.state.console}</p>
+            <p className="console"><strong>---</strong><br></br>{this.state.console1}</p>
+            <p className="console"><strong>---</strong><br></br>{this.state.console2}</p>
+            <p className="console"><strong>---</strong><br></br>{this.state.console3}</p>
+            <p className="console"><strong>---</strong><br></br>{this.state.console4}</p>
+            <p className="console"><strong>---</strong><br></br>{this.state.console5}</p>
             <br /><p><strong>Selected Square: </strong>{this.state.selectedSquare}</p>
             <br /><p><strong>Selected Piece: </strong>{this.state.selectedPiece===null?"null":this.state.selectedPiece.type}</p>
             <br /><strong>Board:</strong>
