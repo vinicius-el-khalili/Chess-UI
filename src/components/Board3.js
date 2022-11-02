@@ -71,7 +71,7 @@ class Board extends React.Component{
             let map = {}  
             moves.forEach(move=>{
                 let _m = preProcess(move)
-                // check for promotions
+                // check for promotions 
                 if (_m.includes("=")){
                     let _l = _m.length
                     _m = "P"+_m.slice(_l-4,_l-2)
@@ -197,10 +197,12 @@ class Board extends React.Component{
             <div className="Board" style={this.state.layout.board}>
                 {container} 
             </div>
-            <div className="console">{this.state.console?this.state.console.globalmoves:null}</div>
-            <div className="console">{this.state.console?this.state.console.piecemoves:null}</div>
+            <div className="console">"global moves:" {this.state.console?this.state.console.globalmoves:null}</div>
+            <div className="console">"piece moves:"{this.state.console?this.state.console.piecemoves:null}</div>
             </>
         )
     }
 }
+
+
 export default Board
